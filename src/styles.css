@@ -3747,6 +3747,368 @@ body.edit #cat-shadow {
   display: none;
 }
 
+/* ── Tech Stack & Toolkit Modal ─────────────────────────────────────────── */
+.techstack-page-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  background: rgba(18, 14, 11, 0.78);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+  box-sizing: border-box;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.35s;
+}
+
+.techstack-page-overlay.show {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.techstack-card {
+  position: relative;
+  width: min(94vw, 840px);
+  max-height: 88vh;
+  background: #fbf7ee;
+  border: 2px solid #5a422d;
+  border-radius: 18px;
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  padding: 2.2rem 2.5rem 2rem;
+  box-sizing: border-box;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  transform: scale(0.95) translateY(14px);
+  transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.techstack-page-overlay.show .techstack-card {
+  transform: scale(1) translateY(0);
+}
+
+.techstack-page-overlay.night-mode .techstack-card {
+  background: #201812;
+  border-color: #6a4e34;
+  color: #ede2d3;
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.85), 0 0 40px rgba(245, 158, 11, 0.1);
+}
+
+.techstack-close-btn {
+  position: absolute;
+  top: 1.2rem;
+  right: 1.2rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #ecdcc3;
+  border: 1.5px solid #ab9273;
+  color: #4a3420;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  z-index: 10;
+}
+
+.techstack-page-overlay.night-mode .techstack-close-btn {
+  background: #2e231b;
+  border-color: #7d5e41;
+  color: #ffd699;
+}
+
+.techstack-close-btn:hover {
+  background: #dfc8a6;
+  transform: rotate(90deg) scale(1.05);
+}
+
+.techstack-header-rule {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.techstack-tag {
+  font-family: 'Pixelify Sans', monospace;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #a65825;
+  letter-spacing: 0.12em;
+}
+
+.techstack-page-overlay.night-mode .techstack-tag {
+  color: #fbbf24;
+}
+
+.techstack-rule-line {
+  flex: 1;
+  height: 1px;
+  background: #dfd0bc;
+}
+
+.techstack-page-overlay.night-mode .techstack-rule-line {
+  background: #4a3828;
+}
+
+.techstack-rule-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #a65825;
+}
+
+.techstack-page-overlay.night-mode .techstack-rule-dot {
+  background: #fbbf24;
+}
+
+.techstack-header-wrap {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.techstack-header-left {
+  flex: 1;
+  min-width: 260px;
+}
+
+.techstack-main-title {
+  font-family: 'Pixelify Sans', monospace;
+  font-size: 1.65rem;
+  font-weight: 700;
+  color: #2b251e;
+  margin: 0 0 6px;
+}
+
+.techstack-page-overlay.night-mode .techstack-main-title {
+  color: #fff4e3;
+}
+
+.techstack-main-sub {
+  font-family: 'Patrick Hand', cursive, sans-serif;
+  font-size: 1.15rem;
+  color: #6a5035;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.techstack-page-overlay.night-mode .techstack-main-sub {
+  color: #baa088;
+}
+
+.techstack-stats-pill {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #f1e5d0;
+  border: 1.5px solid #cfbe9f;
+  border-radius: 12px;
+  padding: 8px 16px;
+}
+
+.techstack-page-overlay.night-mode .techstack-stats-pill {
+  background: #2b2017;
+  border-color: #5c442f;
+}
+
+.stats-count {
+  font-family: 'Pixelify Sans', monospace;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #b8621b;
+}
+
+.techstack-page-overlay.night-mode .stats-count {
+  color: #fbbf24;
+}
+
+.stats-label {
+  font-family: 'SF Mono', Menlo, monospace;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #7c6246;
+  letter-spacing: 0.1em;
+}
+
+.techstack-page-overlay.night-mode .stats-label {
+  color: #9e856f;
+}
+
+/* Categories Grid */
+.techstack-categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 1.2rem;
+}
+
+.tech-category-card {
+  background: #fdfbf7;
+  border: 1.5px solid #dcd1bf;
+  border-radius: 14px;
+  padding: 1.3rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.techstack-page-overlay.night-mode .tech-category-card {
+  background: #281e16;
+  border-color: #4a3625;
+}
+
+.tech-category-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(60, 40, 20, 0.1);
+}
+
+.tech-cat-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tech-cat-icon {
+  font-size: 1.35rem;
+}
+
+.tech-cat-title {
+  font-family: 'Pixelify Sans', monospace;
+  font-size: 1.12rem;
+  font-weight: 700;
+  color: #3b2c1d;
+  margin: 0;
+}
+
+.techstack-page-overlay.night-mode .tech-cat-title {
+  color: #ffd8a8;
+}
+
+.tech-skills-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tech-skill-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #f4ecdc;
+  border: 1px solid #d8c7ab;
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: default;
+  transition: all 0.15s ease;
+}
+
+.techstack-page-overlay.night-mode .tech-skill-pill {
+  background: #34281e;
+  border-color: #553e2d;
+}
+
+.tech-skill-pill:hover {
+  background: #ede0cb;
+  border-color: #bfa886;
+  transform: scale(1.03);
+}
+
+.techstack-page-overlay.night-mode .tech-skill-pill:hover {
+  background: #423427;
+  border-color: #fbbf24;
+}
+
+.skill-name {
+  font-family: 'Patrick Hand', cursive, sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #2b251e;
+}
+
+.techstack-page-overlay.night-mode .skill-name {
+  color: #f8fafc;
+}
+
+.skill-tag {
+  font-family: 'SF Mono', Menlo, monospace;
+  font-size: 0.65rem;
+  font-weight: 700;
+  background: #dfd0b9;
+  color: #634b32;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.techstack-page-overlay.night-mode .skill-tag {
+  background: #4a3625;
+  color: #fbbf24;
+}
+
+/* Footer Note */
+.techstack-footer-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #f5eedf;
+  border: 1.5px dashed #cdba9f;
+  border-radius: 12px;
+  padding: 1rem 1.4rem;
+}
+
+.techstack-page-overlay.night-mode .techstack-footer-card {
+  background: #251b13;
+  border-color: #543c29;
+}
+
+.footer-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.footer-text h4 {
+  font-family: 'Pixelify Sans', monospace;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #3b2c1d;
+  margin: 0 0 2px;
+}
+
+.techstack-page-overlay.night-mode .footer-text h4 {
+  color: #ffd8a8;
+}
+
+.footer-text p {
+  font-family: 'Patrick Hand', cursive, sans-serif;
+  font-size: 1rem;
+  color: #6b533d;
+  margin: 0;
+}
+
+.techstack-page-overlay.night-mode .footer-text p {
+  color: #baa088;
+}
+
+@media (max-width: 600px) {
+  .techstack-card {
+    padding: 1.5rem 1.2rem;
+    gap: 1.2rem;
+  }
+  .techstack-categories-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 
 
 

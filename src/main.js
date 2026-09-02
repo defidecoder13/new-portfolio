@@ -12,6 +12,7 @@ import { createAboutPage } from './about.js';
 import { createProjectsPage } from './projects.js';
 import { createTerminalConsole } from './terminal.js';
 import { createEducationPage } from './education.js';
+import { createTechStackPage } from './techstack.js';
 import {
   initBackgroundMusic,
   startBackgroundMusic,
@@ -243,50 +244,53 @@ function layoutKeyboard() {
   keyboardBtn.style.height = cr.h + 'px';
 }
 
-// ── Living Houseplant Interaction ───────────────────────────────────────────
-const PLANT = {
+// ── Developer Pegboard & Hardware Tool Rack Interaction ─────────────────────
+const PEGBOARD = {
   x: 0.785,
-  y: 0.320,
-  w: 0.170,
-  h: 0.540,
+  y: 0.300,
+  w: 0.190,
+  h: 0.520,
   depth: 0.55,
 };
-const PLANT_LABEL = 'Studio Houseplant · Click to rustle leaves 🌿';
+const PEGBOARD_LABEL = 'Developer Pegboard · Tech Stack & Engineering Toolkit 🛠️ ⚡';
 
-const plantBtn = document.createElement('button');
-plantBtn.className = 'room-micro-btn';
-plantBtn.setAttribute('aria-label', PLANT_LABEL);
+const pegboardBtn = document.createElement('button');
+pegboardBtn.className = 'room-micro-btn';
+pegboardBtn.setAttribute('aria-label', PEGBOARD_LABEL);
 
-plantBtn.addEventListener('click', (e) => {
-  if (EDIT || ui.isOpen()) return;
-  playPlantRustle();
+const TECH_SPARKS = ['⚡', '🛠️', 'React', 'Node.js', 'Next.js', 'Python', 'Gemini AI', 'MongoDB', 'Docker', 'Three.js'];
 
-  const rect = plantBtn.getBoundingClientRect();
+pegboardBtn.addEventListener('click', (e) => {
+  if (EDIT || ui.isOpen() || anyModalOpen()) return;
+  playKeyClick();
+
+  const rect = pegboardBtn.getBoundingClientRect();
   const cx = rect.left + rect.width / 2;
   const cy = rect.top + rect.height * 0.3;
 
-  spawnSparkItem(cx, cy, '🌿');
-  spawnRoomBubble(cx, cy - 20, 'Monstera Plant · Thriving in studio light 🌿');
+  const spark = TECH_SPARKS[Math.floor(Math.random() * TECH_SPARKS.length)];
+  spawnSparkItem(cx, cy, spark);
+  openTechStackPage(0.88, 0.55);
 });
 
-plantBtn.addEventListener('pointerenter', (e) => {
-  if (!EDIT && !ui.isOpen()) {
-    ui.tooltip(PLANT_LABEL, e.clientX, e.clientY);
+pegboardBtn.addEventListener('pointerenter', (e) => {
+  if (!EDIT && !ui.isOpen() && !anyModalOpen()) {
+    ui.tooltip(PEGBOARD_LABEL, e.clientX, e.clientY);
     playHoverTick();
   }
 });
-plantBtn.addEventListener('pointermove', (e) => {
-  if (!EDIT && !ui.isOpen()) ui.tooltip(PLANT_LABEL, e.clientX, e.clientY);
+pegboardBtn.addEventListener('pointermove', (e) => {
+  if (!EDIT && !ui.isOpen() && !anyModalOpen()) ui.tooltip(PEGBOARD_LABEL, e.clientX, e.clientY);
 });
-plantBtn.addEventListener('pointerleave', () => ui.tooltip(null));
-document.body.appendChild(plantBtn);
+pegboardBtn.addEventListener('pointerleave', () => ui.tooltip(null));
+document.body.appendChild(pegboardBtn);
 
-function layoutPlant() {
-  const cr = px.projectImageRect(PLANT);
-  plantBtn.style.left = cr.x + 'px';
-  plantBtn.style.top = cr.y + 'px';
-  plantBtn.style.width = cr.w + 'px';
-  plantBtn.style.height = cr.h + 'px';
+function layoutPegboard() {
+  const cr = px.projectImageRect(PEGBOARD);
+  pegboardBtn.style.left = cr.x + 'px';
+  pegboardBtn.style.top = cr.y + 'px';
+  pegboardBtn.style.width = cr.w + 'px';
+  pegboardBtn.style.height = cr.h + 'px';
 }
 
 // ── Window Portal (Procedural Seascape) ──────────────────────────────────────
@@ -609,6 +613,45 @@ function closeEducationPage(fromPop) {
   }
 }
 
+// ── Illustrated "Tech Stack & Developer Toolkit" Modal Portal ───────────────
+let techStackPage = null;
+let techstackActive = false;
+let techstackHist = false;
+
+function openTechStackPage(fx, fy) {
+  if (techstackActive || educationActive || terminalActive || projectsActive || aboutActive || phoneActive || beachActive || wallActive) return;
+  techstackActive = true;
+  if (document.activeElement) document.activeElement.blur();
+  ui.tooltip(null);
+  px.clearHover();
+  playPortalWhoosh();
+  px.zoomTo(fx, fy, 0.74, 0.035);
+
+  if (!techStackPage) {
+    techStackPage = createTechStackPage(document.body);
+  }
+
+  setTimeout(() => {
+    techStackPage.open(px.isNight(), () => closeTechStackPage(false));
+    if (!techstackHist) {
+      techstackHist = true;
+      try { history.pushState({ techstack: true }, ''); } catch (_) {}
+    }
+  }, 220);
+}
+
+function closeTechStackPage(fromPop) {
+  if (!techstackActive) return;
+  techstackActive = false;
+  playPortalWhoosh();
+  if (techStackPage) techStackPage.close();
+  px.zoomOut();
+  if (techstackHist) {
+    techstackHist = false;
+    if (!fromPop) { try { history.back(); } catch (_) {} }
+  }
+}
+
 window.addEventListener('popstate', () => {
   if (beachActive) exitBeach(true);
   if (wallActive) closeStickyWall(true);
@@ -617,6 +660,7 @@ window.addEventListener('popstate', () => {
   if (projectsActive) closeProjectsPage(true);
   if (terminalActive) closeTerminalConsole(true);
   if (educationActive) closeEducationPage(true);
+  if (techstackActive) closeTechStackPage(true);
 });
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
@@ -627,6 +671,7 @@ document.addEventListener('keydown', (e) => {
     if (projectsActive) closeProjectsPage(false);
     if (terminalActive) closeTerminalConsole(false);
     if (educationActive) closeEducationPage(false);
+    if (techstackActive) closeTechStackPage(false);
   }
 });
 
@@ -665,6 +710,12 @@ const spots = HOTSPOTS.map((h) => {
     // Illustrated Bookshelf -> Education & Knowledge Portal
     if (h.education || h.section === 'education') {
       openEducationPage(fx, fy);
+      return;
+    }
+
+    // Developer Pegboard -> Tech Stack & Toolkit Portal
+    if (h.techstack || h.section === 'techstack') {
+      openTechStackPage(fx, fy);
       return;
     }
 
@@ -857,7 +908,7 @@ const panLeftArrow = makeArrow('left', '‹', 'Look left');
 const panRightArrow = makeArrow('right', '›', 'Look right');
 
 function anyModalOpen() {
-  return beachActive || wallActive || phoneActive || aboutActive || projectsActive || terminalActive || educationActive || ui.isOpen() || EDIT;
+  return beachActive || wallActive || phoneActive || aboutActive || projectsActive || terminalActive || educationActive || techstackActive || ui.isOpen() || EDIT;
 }
 
 function updatePanArrows() {
@@ -965,7 +1016,7 @@ function tick(now) {
   layer.style.transform = `translateX(${px.panShiftPx()}px)`;
   layoutCat();
   layoutKeyboard();
-  layoutPlant();
+  layoutPegboard();
   updatePanArrows();
 
   if (ui.isScreen() && SCREEN_BOX) {
