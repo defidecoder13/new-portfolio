@@ -88,7 +88,7 @@ const ui = createUI({ onClose: () => px.zoomOut() });
 ui.updateProgress(18, 'Initializing atomic spatial engine…');
 
 setTimeout(() => {
-  ui.updateProgress(45, 'Generating 3D orbital electron matrix…');
+  ui.updateProgress(45, 'Generating orbital electron matrix…');
 }, 450);
 
 setTimeout(() => {
