@@ -283,11 +283,10 @@ export function createStickyWall(container) {
   let notes = [];
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) notes = JSON.parse(raw);
+    if (raw !== null) {
+      notes = JSON.parse(raw);
+    }
   } catch (_) {}
-  if (!notes || notes.length === 0) {
-    notes = JSON.parse(JSON.stringify(DEFAULT_NOTES));
-  }
 
   function saveLocal() {
     try {
@@ -304,11 +303,15 @@ export function createStickyWall(container) {
       if (!res.ok) throw new Error('API offline');
       const data = await res.json();
       
-      if (data.notes && Array.isArray(data.notes) && data.notes.length > 0) {
+      if (data.notes && Array.isArray(data.notes)) {
         notes = data.notes;
         saveLocal();
         renderAll();
-        if (liveLabel) liveLabel.textContent = 'MONGODB LIVE GUESTBOOK (SYNCED)';
+        if (liveLabel) {
+          liveLabel.textContent = data.live 
+            ? `MONGODB LIVE GUESTBOOK (${notes.length} NOTES)` 
+            : 'LOCAL GUESTBOOK (SYNCED)';
+        }
       }
     } catch (err) {
       console.warn('[StickyWall] Using local offline cache:', err.message);
@@ -380,6 +383,17 @@ export function createStickyWall(container) {
 
   function renderAll() {
     canvas.innerHTML = '';
+    if (notes.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'empty-board-placeholder';
+      empty.innerHTML = `
+        <div class="empty-board-pin">📌</div>
+        <div class="empty-board-text">Notice board is clear!</div>
+        <div class="empty-board-hint">Click any colored note swatch on the left palette to pin a new message.</div>
+      `;
+      canvas.appendChild(empty);
+      return;
+    }
     notes.forEach(renderNote);
   }
 

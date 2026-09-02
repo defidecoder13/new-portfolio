@@ -954,6 +954,48 @@ body.edit #cat-shadow {
   z-index: 100 !important;
 }
 
+/* Empty Board State */
+.empty-board-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  pointer-events: none;
+  text-align: center;
+  padding: 2rem;
+  z-index: 2;
+}
+
+.empty-board-pin {
+  font-size: 2.6rem;
+  opacity: 0.85;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+  animation: floatPin 3s ease-in-out infinite;
+}
+
+@keyframes floatPin {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.empty-board-text {
+  font-family: 'Patrick Hand', cursive, sans-serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #785a3c;
+  line-height: 1.2;
+}
+
+.empty-board-hint {
+  font-family: 'Patrick Hand', cursive, sans-serif;
+  font-size: 1.15rem;
+  color: #9c8060;
+  max-width: 320px;
+}
+
 /* Warm Hand-Drawn Note Palette */
 .lucas-note.note-yellow { background: #fef08a; color: #241d15; }
 .lucas-note.note-peach  { background: #fed7aa; color: #241d15; }
