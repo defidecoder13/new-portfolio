@@ -129,7 +129,7 @@ const CAT = {
   depth: 0.58,
   drift: 2.6,
 };
-const CAT_LABEL = 'Mochi the Studio Cat · Click to pet 🐾';
+const CAT_LABEL = 'Pet Mochi 🐾';
 
 const catShadow = document.createElement('div');
 catShadow.id = 'cat-shadow';
@@ -201,7 +201,7 @@ const KEYBOARD = {
   h: 0.052,
   depth: 0.65,
 };
-const KEYBOARD_LABEL = 'Mechanical Keyboard · Click to type ⌨️';
+const KEYBOARD_LABEL = 'Keyboard ⌨️';
 
 const keyboardBtn = document.createElement('button');
 keyboardBtn.className = 'room-micro-btn';
@@ -251,7 +251,7 @@ const PLANT = {
   h: 0.540,
   depth: 0.55,
 };
-const PLANT_LABEL = 'Studio Houseplant · Click to rustle leaves 🌿';
+const PLANT_LABEL = 'Houseplant 🌿';
 
 const plantBtn = document.createElement('button');
 plantBtn.className = 'room-micro-btn';
@@ -658,7 +658,7 @@ const spots = HOTSPOTS.map((h) => {
       onFirstGesture();
       const muted = toggleMute();
       playKeyClick();
-      ui.tooltip(muted ? 'Vintage Radio · Music Paused 🔇' : 'Vintage Radio · Music Playing 🎵', e.clientX, e.clientY);
+      ui.tooltip(muted ? 'Music Paused 🔇' : 'Music Playing 🎵', e.clientX, e.clientY);
       return;
     }
 

@@ -11,7 +11,7 @@ export const HOTSPOTS = [
   {
     section: 'about',
     id: 1,
-    label: 'Portrait Frame · Subham Santra (About Me)',
+    label: 'About Me',
     x: 0.405,
     y: 0.095,
     w: 0.075,
@@ -21,7 +21,7 @@ export const HOTSPOTS = [
   {
     section: 'projects',
     id: 2,
-    label: 'Project Folders Shelf · Featured Projects & Case Studies',
+    label: 'Projects',
     x: 0.505,
     y: 0.155,
     w: 0.155,
@@ -31,7 +31,7 @@ export const HOTSPOTS = [
   {
     section: 'contact',
     id: 3,
-    label: 'Sticky Notes · Interactive Message Wall 📌',
+    label: 'Leave a Note 📌',
     x: 0.655,
     y: 0.355,
     w: 0.110,
@@ -41,7 +41,7 @@ export const HOTSPOTS = [
   {
     section: 'terminal',
     id: 4,
-    label: 'CRT Monitor · SubhamOS Dev Terminal 💻',
+    label: 'Terminal 💻',
     x: 0.475,
     y: 0.375,
     w: 0.158,
@@ -51,7 +51,7 @@ export const HOTSPOTS = [
   {
     section: 'lamp',
     id: 5,
-    label: 'Desk Lamp · Day / Night Switch',
+    label: 'Day / Night Lamp 💡',
     x: 0.355,
     y: 0.305,
     w: 0.115,
@@ -61,7 +61,7 @@ export const HOTSPOTS = [
   {
     section: 'contact',
     id: 6,
-    label: 'Retro Telephone · Direct Line & Contact Subham ☎️',
+    label: 'Contact Me ☎️',
     x: 0.405,
     y: 0.490,
     w: 0.080,
@@ -71,7 +71,7 @@ export const HOTSPOTS = [
   {
     section: 'hobbies',
     id: 7,
-    label: 'Vintage Radio · Play / Pause Music 📻',
+    label: 'Music Radio 📻',
     x: 0.840,
     y: 0.060,
     w: 0.110,
@@ -81,7 +81,7 @@ export const HOTSPOTS = [
   {
     section: 'education',
     id: 8,
-    label: 'Vintage Bookshelf · Experience, Education & Certifications 💼 🎓',
+    label: 'Education & Experience 🎓',
     x: 0.160,
     y: 0.090,
     w: 0.180,
@@ -91,7 +91,7 @@ export const HOTSPOTS = [
   {
     section: 'beach',
     id: 11,
-    label: 'Look Outside · Window to the Sea 🌊',
+    label: 'Look Outside 🌊',
     x: 0.000,
     y: 0.000,
     w: 0.150,
