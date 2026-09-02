@@ -82,14 +82,14 @@ if (!px.ok) {
 }
 
 const ui = createUI({ onClose: () => px.zoomOut() });
-ui.updateProgress(25, 'Brewing hot coffee & preparing canvas…');
+ui.updateProgress(25, 'Initializing atomic spatial engine…');
 
 setTimeout(() => {
-  ui.updateProgress(55, 'Rendering 2.5D spatial depth & lights…');
+  ui.updateProgress(60, 'Compiling 2.5D depth shaders & lighting…');
 }, 120);
 
 setTimeout(() => {
-  ui.updateProgress(78, 'Tuning vintage radio frequencies…');
+  ui.updateProgress(85, 'Synchronizing interactive studio room…');
 }, 260);
 
 // ── Floating Room Bubble & Sparks ──────────────────────────────────────────

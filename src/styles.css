@@ -415,25 +415,41 @@ body.screen-mode #screen-dim {
   color: var(--warm);
 }
 
-/* ── Cozy Studio Preloader Screen ────────────────────────────────────────── */
+/* ── Atomic Preloader Screen (Dribbble/SVGator Inspired) ─────────────────── */
 #loading.studio-loader {
   position: fixed;
   inset: 0;
   z-index: 1000;
-  background: radial-gradient(circle at 50% 45%, #241a13 0%, #110d0a 100%);
+  background: radial-gradient(ellipse at 50% 45%, #18120d 0%, #080605 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   user-select: none;
-  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.8s;
+  transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1), transform 0.75s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.75s;
 }
 
 #loading.hide {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transform: scale(1.04);
+  transform: scale(1.06);
+}
+
+.atomic-bg-glow {
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.16) 0%, rgba(217, 119, 6, 0.05) 45%, transparent 70%);
+  border-radius: 50%;
+  filter: blur(40px);
+  pointer-events: none;
+  animation: atomicBgPulse 4s ease-in-out infinite alternate;
+}
+
+@keyframes atomicBgPulse {
+  0% { transform: scale(0.85); opacity: 0.6; }
+  100% { transform: scale(1.15); opacity: 1; }
 }
 
 /* Floating Ambient Dust Particles */
@@ -446,9 +462,9 @@ body.screen-mode #screen-dim {
 
 .loader-particles .particle {
   position: absolute;
-  background: #f6cf7a;
+  background: #f59e0b;
   border-radius: 50%;
-  opacity: 0.25;
+  opacity: 0.3;
   filter: blur(1px);
   animation: floatDust 6s infinite ease-in-out;
 }
@@ -462,161 +478,260 @@ body.screen-mode #screen-dim {
 
 @keyframes floatDust {
   0% { transform: translateY(0) scale(0.8); opacity: 0; }
-  30% { opacity: 0.35; }
-  80% { opacity: 0.2; }
+  30% { opacity: 0.4; }
+  80% { opacity: 0.25; }
   100% { transform: translateY(-350px) scale(1.2); opacity: 0; }
 }
 
-/* Main Preloader Card */
-.loader-card {
+/* Central Atomic Loader Wrap */
+.atomic-loader-wrap {
   position: relative;
-  width: min(90vw, 420px);
-  background: #261c14;
-  border: 2px solid #5d4229;
-  border-radius: 18px;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 0 50px rgba(229, 154, 56, 0.1);
-  padding: 2.2rem 2rem 2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.2rem;
+  gap: 2.4rem;
+  z-index: 2;
   text-align: center;
-  box-sizing: border-box;
 }
 
-.loader-screw {
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  background: #6b5034;
-  border-radius: 50%;
-  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.8), 0 1px 1px rgba(255, 255, 255, 0.3);
-}
-
-.loader-screw.top-left     { top: 12px; left: 12px; }
-.loader-screw.top-right    { top: 12px; right: 12px; }
-.loader-screw.bottom-left  { bottom: 12px; left: 12px; }
-.loader-screw.bottom-right { bottom: 12px; right: 12px; }
-
-/* Cat Sprite Container */
-.loader-cat-container {
+/* 3D Atomic Gyroscope / Reactor Core */
+.atomic-container {
   position: relative;
-  width: 80px;
-  height: 80px;
+  width: 140px;
+  height: 140px;
   display: flex;
   align-items: center;
   justify-content: center;
+  perspective: 900px;
+  transform-style: preserve-3d;
 }
 
-.cat-halo {
+/* Central Glowing Nucleus */
+.atomic-nucleus {
   position: absolute;
-  width: 70px;
-  height: 70px;
-  background: radial-gradient(circle, rgba(246, 207, 122, 0.25) 0%, transparent 70%);
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
-  animation: haloPulse 2.5s infinite alternate ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
 }
 
-@keyframes haloPulse {
-  from { transform: scale(0.9); opacity: 0.6; }
-  to { transform: scale(1.2); opacity: 1; }
+.nucleus-core {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ffffff 0%, #fbbf24 45%, #ea580c 100%);
+  box-shadow: 0 0 16px #f59e0b, 0 0 32px rgba(245, 158, 11, 0.8), inset 0 0 6px #fff;
+  animation: nucleusPulse 1.8s ease-in-out infinite alternate;
 }
 
-.loader-cat-sprite {
-  width: 72px;
-  height: 72px;
-  background-image: url('/assets/cat-idle.webp');
-  background-size: 576px 72px;
-  animation: cat-idle 3.8s steps(8) infinite;
-  image-rendering: pixelated;
-  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.6));
+.nucleus-halo {
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.4) 0%, transparent 70%);
+  animation: haloBreathe 2.4s ease-in-out infinite alternate;
 }
 
-/* Studio Branding */
-.loader-brand {
+@keyframes nucleusPulse {
+  0% { transform: scale(0.9); filter: brightness(1); }
+  100% { transform: scale(1.15); filter: brightness(1.35); }
+}
+
+@keyframes haloBreathe {
+  0% { transform: scale(0.8); opacity: 0.5; }
+  100% { transform: scale(1.35); opacity: 0.95; }
+}
+
+/* Shockwave Rings */
+.atomic-shockwave {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  border: 1.5px solid rgba(245, 158, 11, 0.65);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: shockwaveExpand 2.8s cubic-bezier(0.1, 0.8, 0.3, 1) infinite;
+}
+
+.atomic-shockwave.wave-2 {
+  animation-delay: 1.4s;
+}
+
+@keyframes shockwaveExpand {
+  0% { transform: scale(0.6); opacity: 0.9; }
+  100% { transform: scale(3.8); opacity: 0; }
+}
+
+/* 3D Atomic Orbital Tracks */
+.atomic-orbit {
+  position: absolute;
+  width: 124px;
+  height: 124px;
+  border-radius: 50%;
+  border: 2px solid rgba(245, 158, 11, 0.3);
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.15), inset 0 0 10px rgba(245, 158, 11, 0.1);
+  transform-style: preserve-3d;
+}
+
+/* Orbit 1: Tilted 68deg X, 0deg Z */
+.atomic-orbit.orbit-1 {
+  transform: rotateZ(0deg) rotateX(68deg);
+  border-color: rgba(56, 189, 248, 0.45);
+}
+
+/* Orbit 2: Tilted 60deg Z, 68deg X */
+.atomic-orbit.orbit-2 {
+  transform: rotateZ(60deg) rotateX(68deg);
+  border-color: rgba(251, 191, 36, 0.45);
+}
+
+/* Orbit 3: Tilted 120deg Z, 68deg X */
+.atomic-orbit.orbit-3 {
+  transform: rotateZ(120deg) rotateX(68deg);
+  border-color: rgba(244, 63, 94, 0.45);
+}
+
+/* Orbiting Electrons */
+.atomic-electron {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 11px;
+  height: 11px;
+  margin-top: -5.5px;
+  margin-left: -5.5px;
+  border-radius: 50%;
+  background: #ffffff;
+  transform-origin: 5.5px 67.5px; /* Radius = 62px */
+}
+
+.orbit-1 .atomic-electron {
+  animation: orbitRotate 1.6s linear infinite;
+  box-shadow: 0 0 12px #38bdf8, 0 0 24px #0284c7;
+}
+
+.orbit-2 .atomic-electron {
+  animation: orbitRotate 2.1s linear infinite reverse;
+  box-shadow: 0 0 12px #fbbf24, 0 0 24px #d97706;
+}
+
+.orbit-3 .atomic-electron {
+  animation: orbitRotate 1.85s linear infinite;
+  box-shadow: 0 0 12px #f43f5e, 0 0 24px #e11d48;
+}
+
+@keyframes orbitRotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.electron-glow {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, transparent 70%);
+}
+
+/* Info Box */
+.atomic-info {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  align-items: center;
+  gap: 1.1rem;
+  width: min(90vw, 360px);
 }
 
-.loader-title {
-  font-family: 'Pixelify Sans', monospace;
-  font-size: 1.35rem;
-  font-weight: 700;
-  color: #f6ebd8;
-  letter-spacing: 0.08em;
+.atomic-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.atomic-title {
+  font-family: 'SF Mono', Menlo, Monaco, Consolas, monospace;
+  font-size: 1.18rem;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  color: #f8fafc;
   margin: 0;
-  text-shadow: 0 2px 8px rgba(229, 154, 56, 0.35);
+  text-shadow: 0 2px 14px rgba(245, 158, 11, 0.5);
 }
 
-.loader-subtitle {
-  font-family: 'Patrick Hand', cursive, sans-serif;
-  font-size: 0.95rem;
-  color: #baa088;
+.atomic-subtitle {
+  font-family: 'SF Mono', Menlo, monospace;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  color: #94a3b8;
+  text-transform: uppercase;
 }
 
-/* Progress Bar */
-.loader-progress-box {
+/* Sleek Atomic Progress Bar */
+.atomic-progress-box {
   display: flex;
   align-items: center;
   gap: 12px;
   width: 100%;
-  max-width: 300px;
 }
 
-.loader-progress-track {
+.atomic-progress-track {
   flex: 1;
-  height: 14px;
-  background: #150f0b;
-  border: 1.5px solid #4a3420;
+  height: 6px;
+  background: rgba(30, 25, 20, 0.85);
+  border: 1px solid rgba(245, 158, 11, 0.3);
   border-radius: 999px;
-  padding: 2px;
-  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.8);
   overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.8);
   position: relative;
 }
 
-.loader-progress-bar {
+.atomic-progress-bar {
   height: 100%;
   width: 0%;
   border-radius: 999px;
-  background: linear-gradient(90deg, #d9822b, #f6cf7a);
-  box-shadow: 0 0 12px rgba(229, 154, 56, 0.6);
+  background: linear-gradient(90deg, #f59e0b 0%, #fbbf24 60%, #38bdf8 100%);
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.8);
   transition: width 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
   position: relative;
   overflow: hidden;
 }
 
-.progress-glint {
+.atomic-progress-glint {
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.5) 50%, transparent 100%);
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.7) 50%, transparent 100%);
   transform: translateX(-100%);
-  animation: barGlint 1.8s infinite;
+  animation: atomicGlint 1.6s infinite;
 }
 
-@keyframes barGlint {
+@keyframes atomicGlint {
   0% { transform: translateX(-100%); }
   50%, 100% { transform: translateX(100%); }
 }
 
-.loader-percent {
-  font-family: 'Pixelify Sans', monospace;
-  font-size: 0.95rem;
+.atomic-percent {
+  font-family: 'SF Mono', Menlo, Monaco, monospace;
+  font-size: 0.82rem;
   font-weight: 700;
-  color: #ffd276;
-  min-width: 40px;
+  color: #fbbf24;
+  min-width: 42px;
   text-align: right;
+  letter-spacing: 0.05em;
 }
 
 /* Status Text */
-.loader-status {
-  font-family: 'Patrick Hand', cursive, sans-serif;
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #c4ad94;
+.atomic-status {
+  font-family: 'SF Mono', Menlo, monospace;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #94a3b8;
   margin: 0;
-  min-height: 22px;
+  letter-spacing: 0.06em;
+  min-height: 20px;
   transition: color 0.2s ease;
 }
 
