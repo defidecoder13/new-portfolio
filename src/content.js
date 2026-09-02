@@ -145,30 +145,6 @@ export const SECTIONS = {
     `,
   },
 
-  awards: {
-    title: 'Awards & Hackathons',
-    tagline: 'Competitions, Recognition & Wins',
-    body: `
-      <ul class="award-list">
-        <li>
-          <div class="award-badge">🏆 1st Place</div>
-          <h4>Global Creative Tech Hackathon 2025</h4>
-          <p>Awarded for building an AI-assisted spatial canvas that transforms sketches into live 3D web environments in seconds.</p>
-        </li>
-        <li>
-          <div class="award-badge">🌟 Best UI/UX</div>
-          <h4>Developer Experience Challenge 2024</h4>
-          <p>Recognized for creating an ultra-lightweight terminal companion that logs developer activity locally.</p>
-        </li>
-        <li>
-          <div class="award-badge">🥇 Grand Prize</div>
-          <h4>Interactive Web Awards 2023</h4>
-          <p>Awarded for outstanding technical achievement in WebGL and accessible creative web design.</p>
-        </li>
-      </ul>
-    `,
-  },
-
   gallery: {
     title: 'Creative Coding & Visuals',
     tagline: 'Generative Art & Experimental Shaders',

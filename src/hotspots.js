@@ -89,15 +89,6 @@ export const HOTSPOTS = [
     education: true,
   },
   {
-    section: 'awards',
-    id: 9,
-    label: 'Studio Houseplant · Awards & Recognitions',
-    x: 0.760,
-    y: 0.260,
-    w: 0.220,
-    h: 0.600,
-  },
-  {
     section: 'beach',
     id: 11,
     label: 'Look Outside · Window to the Sea 🌊',
