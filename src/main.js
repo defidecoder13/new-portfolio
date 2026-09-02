@@ -12,7 +12,6 @@ import { createAboutPage } from './about.js';
 import { createProjectsPage } from './projects.js';
 import { createTerminalConsole } from './terminal.js';
 import { createEducationPage } from './education.js';
-import { createWelcomeModal } from './welcome.js';
 import {
   initBackgroundMusic,
   startBackgroundMusic,
@@ -610,22 +609,7 @@ function closeEducationPage(fromPop) {
   }
 }
 
-// ── Welcome Guide & Quick Directory Modal ──────────────────────────────────
-let welcomeModal = null;
-
-function handleDirectoryNavigate(section) {
-  if (section === 'projects') openProjectsPage(0.58, 0.22);
-  else if (section === 'about') openAboutPage(0.44, 0.18);
-  else if (section === 'education') openEducationPage(0.25, 0.40);
-  else if (section === 'terminal') openTerminalConsole(SCREEN_BOX.x + SCREEN_BOX.w / 2, SCREEN_BOX.y + SCREEN_BOX.h / 2);
-  else if (section === 'wall') openStickyWall(0.71, 0.41);
-  else if (section === 'phone') openPhoneConsole(0.445, 0.54);
-}
-
-welcomeModal = createWelcomeModal(document.body, { onNavigate: handleDirectoryNavigate });
-
 window.addEventListener('popstate', () => {
-  if (welcomeModal && welcomeModal.isOpen()) welcomeModal.close();
   if (beachActive) exitBeach(true);
   if (wallActive) closeStickyWall(true);
   if (phoneActive) closePhoneConsole(true);
@@ -636,7 +620,6 @@ window.addEventListener('popstate', () => {
 });
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
-    if (welcomeModal && welcomeModal.isOpen()) { welcomeModal.close(); return; }
     if (beachActive) exitBeach(false);
     if (wallActive) closeStickyWall(false);
     if (phoneActive) closePhoneConsole(false);
@@ -874,7 +857,7 @@ const panLeftArrow = makeArrow('left', '‹', 'Look left');
 const panRightArrow = makeArrow('right', '›', 'Look right');
 
 function anyModalOpen() {
-  return beachActive || wallActive || phoneActive || aboutActive || projectsActive || terminalActive || educationActive || (welcomeModal && welcomeModal.isOpen()) || ui.isOpen() || EDIT;
+  return beachActive || wallActive || phoneActive || aboutActive || projectsActive || terminalActive || educationActive || ui.isOpen() || EDIT;
 }
 
 function updatePanArrows() {
@@ -1009,12 +992,6 @@ px.onReady(() => {
   setTimeout(() => {
     layoutHotspots();
     ui.loadingDone(() => {
-      setTimeout(() => {
-        if (welcomeModal && !anyModalOpen()) {
-          welcomeModal.open();
-        }
-      }, 350);
-
       const idle = window.requestIdleCallback || ((f) => setTimeout(f, 1500));
       idle(() => {
         px.loadNight();
