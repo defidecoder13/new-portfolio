@@ -224,7 +224,7 @@ export function createStickyWall(container) {
       <!-- Live MongoDB Sync Status Pill -->
       <div class="lucas-live-badge" id="lucas-live-badge">
         <span class="live-dot pulse"></span>
-        <span class="live-label" id="lucas-live-label">LIVE COMMUNITY BOARD</span>
+        <span class="live-label" id="lucas-live-label">LEAVE A NOTE FOR ME</span>
       </div>
 
       <!-- Left Color Palette Picker Dock Capsule -->
@@ -307,7 +307,7 @@ export function createStickyWall(container) {
       
       // If server is in fallback mode (e.g. database connecting/offline), DO NOT wipe local notes!
       if (data.fallback || !data.live) {
-        if (liveLabel) liveLabel.textContent = 'LOCAL GUESTBOOK (OFFLINE)';
+        if (liveLabel) liveLabel.textContent = 'LEAVE A NOTE FOR ME';
         return;
       }
 
@@ -327,12 +327,12 @@ export function createStickyWall(container) {
         saveLocal();
         renderAll();
         if (liveLabel) {
-          liveLabel.textContent = `MONGODB LIVE GUESTBOOK (${notes.length} NOTES)`;
+          liveLabel.textContent = 'LEAVE A NOTE FOR ME';
         }
       }
     } catch (err) {
       console.warn('[StickyWall] Using local offline cache:', err.message);
-      if (liveLabel) liveLabel.textContent = 'LOCAL GUESTBOOK (OFFLINE)';
+      if (liveLabel) liveLabel.textContent = 'LEAVE A NOTE FOR ME';
     }
   }
 
