@@ -89,16 +89,6 @@ export const HOTSPOTS = [
     education: true,
   },
   {
-    section: 'techstack',
-    id: 9,
-    label: 'Developer Pegboard · Tech Stack & Engineering Toolkit 🛠️ ⚡',
-    x: 0.785,
-    y: 0.300,
-    w: 0.190,
-    h: 0.520,
-    techstack: true,
-  },
-  {
     section: 'beach',
     id: 11,
     label: 'Look Outside · Window to the Sea 🌊',
