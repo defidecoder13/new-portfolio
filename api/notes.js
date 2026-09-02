@@ -1,8 +1,18 @@
-// ──────────────────────────────────────────────────────────────────────────
-// STICKY NOTES API HANDLER (VERCEL / NETLIFY / VITE DEV MIDDLEWARE)
-// ──────────────────────────────────────────────────────────────────────────
-
 import { connectToDatabase, getStickyNotesCollection } from '../server/db.js';
+import { ObjectId } from 'mongodb';
+
+function getNoteQuery(targetId) {
+  const conditions = [
+    { noteId: String(targetId) },
+    { id: String(targetId) },
+  ];
+  if (typeof targetId === 'string' && targetId.length === 24 && ObjectId.isValid(targetId)) {
+    try {
+      conditions.push({ _id: new ObjectId(targetId) });
+    } catch (_) {}
+  }
+  return { $or: conditions };
+}
 
 export async function handleNotesRequest(req, res) {
   res.setHeader('Content-Type', 'application/json');
@@ -36,7 +46,9 @@ export async function handleNotesRequest(req, res) {
 
       // Normalize _id to string id
       const formatted = notes.map((n) => ({
-        id: n.noteId || n._id.toString(),
+        id: n.noteId || (n._id ? n._id.toString() : Date.now().toString()),
+        noteId: n.noteId || (n._id ? n._id.toString() : ''),
+        _id: n._id ? n._id.toString() : (n.noteId || ''),
         author: n.author || 'ANONYMOUS',
         date: n.date || 'TODAY',
         color: n.color || 'yellow',
@@ -44,6 +56,7 @@ export async function handleNotesRequest(req, res) {
         text: n.text || '',
         x: typeof n.x === 'number' ? n.x : 10,
         y: typeof n.y === 'number' ? n.y : 10,
+        z: typeof n.z === 'number' ? n.z : 10,
         createdAt: n.createdAt,
       }));
 
@@ -76,8 +89,9 @@ export async function handleNotesRequest(req, res) {
         return;
       }
 
+      const generatedId = body.id || body.noteId || Date.now().toString();
       const noteDoc = {
-        noteId: body.id || Date.now().toString(),
+        noteId: generatedId,
         author: (body.author || 'VISITOR').toUpperCase().slice(0, 20),
         date: body.date || new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }).toUpperCase(),
         color: body.color || 'yellow',
@@ -85,12 +99,18 @@ export async function handleNotesRequest(req, res) {
         text,
         x: typeof body.x === 'number' ? body.x : 50,
         y: typeof body.y === 'number' ? body.y : 50,
+        z: typeof body.z === 'number' ? body.z : 10,
         createdAt: new Date(),
       };
 
       const result = await collection.insertOne(noteDoc);
+      const savedNote = {
+        ...noteDoc,
+        _id: result.insertedId.toString(),
+        id: noteDoc.noteId,
+      };
       res.statusCode = 201;
-      res.end(JSON.stringify({ success: true, note: { ...noteDoc, _id: result.insertedId } }));
+      res.end(JSON.stringify({ success: true, note: savedNote }));
     } catch (err) {
       console.error('[API] POST /api/notes error:', err);
       res.statusCode = 500;
@@ -108,7 +128,7 @@ export async function handleNotesRequest(req, res) {
     }
 
     try {
-      const targetId = body.id || body.noteId;
+      const targetId = body.id || body.noteId || body._id;
       if (!targetId) {
         res.statusCode = 400;
         res.end(JSON.stringify({ error: 'Missing note id' }));
@@ -118,18 +138,17 @@ export async function handleNotesRequest(req, res) {
       const updateFields = {};
       if (typeof body.x === 'number') updateFields.x = body.x;
       if (typeof body.y === 'number') updateFields.y = body.y;
+      if (typeof body.z === 'number') updateFields.z = body.z;
       if (typeof body.text === 'string') updateFields.text = body.text.slice(0, 240);
       if (body.color) updateFields.color = body.color;
       if (body.pinColor) updateFields.pinColor = body.pinColor;
       updateFields.updatedAt = new Date();
 
-      await collection.updateOne(
-        { $or: [{ noteId: targetId }, { _id: targetId }] },
-        { $set: updateFields }
-      );
+      const query = getNoteQuery(targetId);
+      const updateResult = await collection.updateOne(query, { $set: updateFields });
 
       res.statusCode = 200;
-      res.end(JSON.stringify({ success: true, updated: updateFields }));
+      res.end(JSON.stringify({ success: true, matchedCount: updateResult.matchedCount, updated: updateFields }));
     } catch (err) {
       console.error('[API] PUT /api/notes error:', err);
       res.statusCode = 500;
@@ -147,9 +166,10 @@ export async function handleNotesRequest(req, res) {
     }
 
     try {
-      const targetId = body.id || req.url.split('/').pop();
+      const targetId = body.id || body.noteId || body._id || req.url.split('/').pop();
       if (targetId) {
-        await collection.deleteOne({ $or: [{ noteId: targetId }, { _id: targetId }] });
+        const query = getNoteQuery(targetId);
+        await collection.deleteOne(query);
       }
       res.statusCode = 200;
       res.end(JSON.stringify({ success: true }));

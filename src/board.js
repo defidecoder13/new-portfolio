@@ -278,6 +278,7 @@ export function createStickyWall(container) {
   let activeColor = 'yellow';
   let zIndexCounter = 30;
   let pollTimer = null;
+  let isAnyDragging = false;
 
   // Local Cache + Initial State
   let notes = [];
@@ -298,12 +299,14 @@ export function createStickyWall(container) {
   // MONGODB LIVE BACKEND SYNC
   // ──────────────────────────────────────────────────────────────────────────
   async function fetchLiveNotes() {
+    if (isAnyDragging) return; // Never wipe or disrupt note while user is dragging
     try {
       const res = await fetch(API_URL);
       if (!res.ok) throw new Error('API offline');
       const data = await res.json();
       
       if (data.notes && Array.isArray(data.notes)) {
+        if (isAnyDragging) return;
         notes = data.notes;
         saveLocal();
         renderAll();
@@ -321,11 +324,25 @@ export function createStickyWall(container) {
 
   async function syncNoteToMongo(noteObj) {
     try {
-      await fetch(API_URL, {
+      const res = await fetch(API_URL, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(noteObj),
+        body: JSON.stringify({
+          id: noteObj.id || noteObj.noteId || noteObj._id,
+          noteId: noteObj.noteId || noteObj.id,
+          _id: noteObj._id || noteObj.id,
+          x: noteObj.x,
+          y: noteObj.y,
+          z: noteObj.z,
+          text: noteObj.text,
+          color: noteObj.color,
+          pinColor: noteObj.pinColor,
+        }),
       });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        console.error('[StickyWall] Update sync error:', data.error || `HTTP ${res.status}`);
+      }
     } catch (err) {
       console.warn('[StickyWall] Update sync error:', err.message);
     }
@@ -340,8 +357,9 @@ export function createStickyWall(container) {
       });
       const data = await res.json().catch(() => ({}));
       if (res.ok) {
-        if (data.note && (data.note._id || data.note.noteId)) {
+        if (data.note) {
           noteObj._id = data.note._id || noteObj.id;
+          noteObj.noteId = data.note.noteId || noteObj.id;
           saveLocal();
         }
       } else {
@@ -410,6 +428,7 @@ export function createStickyWall(container) {
       if (e.target.tagName === 'A') return;
       e.stopPropagation();
       isDragging = true;
+      isAnyDragging = true;
       el.setPointerCapture(e.pointerId);
 
       zIndexCounter += 1;
@@ -443,6 +462,7 @@ export function createStickyWall(container) {
     const finishDrag = (e) => {
       if (!isDragging) return;
       isDragging = false;
+      setTimeout(() => { isAnyDragging = false; }, 300);
       try { el.releasePointerCapture(e.pointerId); } catch (_) {}
       el.classList.remove('dragging');
 
