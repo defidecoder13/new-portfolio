@@ -143,6 +143,17 @@ export async function handleContactRequest(req, res) {
 }
 
 function parseBody(req) {
+  if (req.body !== undefined && req.body !== null) {
+    if (typeof req.body === 'object') return Promise.resolve(req.body);
+    if (typeof req.body === 'string') {
+      try {
+        return Promise.resolve(JSON.parse(req.body));
+      } catch (_) {
+        return Promise.resolve({});
+      }
+    }
+  }
+
   return new Promise((resolve) => {
     let data = '';
     req.on('data', (chunk) => { data += chunk; });
@@ -153,6 +164,9 @@ function parseBody(req) {
         resolve({});
       }
     });
+    setTimeout(() => {
+      if (!data) resolve({});
+    }, 500);
   });
 }
 

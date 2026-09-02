@@ -57,25 +57,32 @@ export async function handleNotesRequest(req, res) {
     return;
   }
 
-  // Parse Body Helper
+  // Parse Body Helper (Compatible with Vercel pre-parsed body & raw Node streams)
   const body = await parseBody(req);
 
   // 2. CREATE A NEW NOTE
   if (req.method === 'POST') {
     if (!collection) {
-      res.statusCode = 200;
-      res.end(JSON.stringify({ success: true, note: body, fallback: true }));
+      res.statusCode = 503;
+      res.end(JSON.stringify({ error: 'MongoDB database not connected. Please verify MONGODB_URI in environment variables.' }));
       return;
     }
 
     try {
+      const text = (body.text || '').trim().slice(0, 240);
+      if (!text) {
+        res.statusCode = 400;
+        res.end(JSON.stringify({ error: 'Note text cannot be empty' }));
+        return;
+      }
+
       const noteDoc = {
         noteId: body.id || Date.now().toString(),
         author: (body.author || 'VISITOR').toUpperCase().slice(0, 20),
         date: body.date || new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }).toUpperCase(),
         color: body.color || 'yellow',
         pinColor: body.pinColor || body.color || 'yellow',
-        text: (body.text || '').slice(0, 240),
+        text,
         x: typeof body.x === 'number' ? body.x : 50,
         y: typeof body.y === 'number' ? body.y : 50,
         createdAt: new Date(),
@@ -95,8 +102,8 @@ export async function handleNotesRequest(req, res) {
   // 3. UPDATE A NOTE (POSITION / CONTENT)
   if (req.method === 'PUT') {
     if (!collection) {
-      res.statusCode = 200;
-      res.end(JSON.stringify({ success: true, note: body, fallback: true }));
+      res.statusCode = 503;
+      res.end(JSON.stringify({ error: 'MongoDB database not connected.' }));
       return;
     }
 
@@ -134,8 +141,8 @@ export async function handleNotesRequest(req, res) {
   // 4. DELETE A NOTE
   if (req.method === 'DELETE') {
     if (!collection) {
-      res.statusCode = 200;
-      res.end(JSON.stringify({ success: true, fallback: true }));
+      res.statusCode = 503;
+      res.end(JSON.stringify({ error: 'MongoDB database not connected.' }));
       return;
     }
 
@@ -159,6 +166,17 @@ export async function handleNotesRequest(req, res) {
 }
 
 function parseBody(req) {
+  if (req.body !== undefined && req.body !== null) {
+    if (typeof req.body === 'object') return Promise.resolve(req.body);
+    if (typeof req.body === 'string') {
+      try {
+        return Promise.resolve(JSON.parse(req.body));
+      } catch (_) {
+        return Promise.resolve({});
+      }
+    }
+  }
+
   return new Promise((resolve) => {
     let data = '';
     req.on('data', (chunk) => { data += chunk; });
@@ -169,6 +187,9 @@ function parseBody(req) {
         resolve({});
       }
     });
+    setTimeout(() => {
+      if (!data) resolve({});
+    }, 500);
   });
 }
 

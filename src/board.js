@@ -338,11 +338,14 @@ export function createStickyWall(container) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(noteObj),
       });
+      const data = await res.json().catch(() => ({}));
       if (res.ok) {
-        const data = await res.json();
-        if (data.note && data.note._id) {
-          noteObj._id = data.note._id;
+        if (data.note && (data.note._id || data.note.noteId)) {
+          noteObj._id = data.note._id || noteObj.id;
+          saveLocal();
         }
+      } else {
+        console.error('[StickyWall] Post note error:', data.error || `HTTP ${res.status}`);
       }
     } catch (err) {
       console.warn('[StickyWall] Post sync error:', err.message);
