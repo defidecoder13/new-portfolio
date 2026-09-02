@@ -81,16 +81,23 @@ if (!px.ok) {
   throw px.error;
 }
 
+const loadStartTime = Date.now();
+const MIN_LOADER_DURATION = 2200; // 2.2s showcase duration for smooth atomic animation
+
 const ui = createUI({ onClose: () => px.zoomOut() });
-ui.updateProgress(25, 'Initializing atomic spatial engine…');
+ui.updateProgress(18, 'Initializing atomic spatial engine…');
 
 setTimeout(() => {
-  ui.updateProgress(60, 'Compiling 2.5D depth shaders & lighting…');
-}, 120);
+  ui.updateProgress(45, 'Generating 3D orbital electron matrix…');
+}, 450);
 
 setTimeout(() => {
-  ui.updateProgress(85, 'Synchronizing interactive studio room…');
-}, 260);
+  ui.updateProgress(72, 'Compiling 2.5D depth shaders & lighting…');
+}, 950);
+
+setTimeout(() => {
+  ui.updateProgress(90, 'Calibrating interactive studio workspace…');
+}, 1500);
 
 // ── Floating Room Bubble & Sparks ──────────────────────────────────────────
 function spawnRoomBubble(x, y, text) {
@@ -979,7 +986,9 @@ function tick(now) {
 requestAnimationFrame(tick);
 
 px.onReady(() => {
-  ui.updateProgress(94, 'Waking up Mochi 🐾…');
+  const elapsed = Date.now() - loadStartTime;
+  const remaining = Math.max(0, MIN_LOADER_DURATION - elapsed);
+
   setTimeout(() => {
     layoutHotspots();
     ui.loadingDone(() => {
@@ -989,5 +998,5 @@ px.onReady(() => {
         loadBeach();
       });
     });
-  }, 280);
+  }, remaining);
 });

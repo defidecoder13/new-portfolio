@@ -232,17 +232,37 @@ export function createUI({ onClose } = {}) {
   const statusLabel = $('loader-status');
 
   let currentPercent = 0;
+  let animFrame = null;
 
   function updateProgress(targetPercent, message) {
     if (!loading || loading.classList.contains('hide')) return;
-    currentPercent = Math.min(100, Math.max(currentPercent, targetPercent));
-    if (progressBar) progressBar.style.width = `${currentPercent}%`;
-    if (percentLabel) percentLabel.textContent = `${Math.round(currentPercent)}%`;
+    targetPercent = Math.min(100, Math.max(currentPercent, targetPercent));
+    
+    // Smooth number and bar interpolation
+    const startVal = currentPercent;
+    const diff = targetPercent - startVal;
+    const duration = 400;
+    const startT = performance.now();
+
+    if (animFrame) cancelAnimationFrame(animFrame);
+
+    function step(now) {
+      const p = Math.min(1, (now - startT) / duration);
+      const eased = 1 - Math.pow(1 - p, 3);
+      currentPercent = startVal + diff * eased;
+      if (progressBar) progressBar.style.width = `${currentPercent}%`;
+      if (percentLabel) percentLabel.textContent = `${Math.round(currentPercent)}%`;
+      if (p < 1) {
+        animFrame = requestAnimationFrame(step);
+      }
+    }
+    animFrame = requestAnimationFrame(step);
+
     if (message && statusLabel) statusLabel.textContent = message;
   }
 
   function loadingDone(onComplete) {
-    updateProgress(100, 'Studio Ready! Welcome.');
+    updateProgress(100, 'Atomic Engine Synchronized · Welcome');
     setTimeout(() => {
       loading.classList.add('hide');
       if (hint) {
@@ -252,7 +272,7 @@ export function createUI({ onClose } = {}) {
         setTimeout(() => hint.classList.add('faded'), 7000);
       }
       if (onComplete) onComplete();
-    }, 450);
+    }, 650);
   }
 
   return {
