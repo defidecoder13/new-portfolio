@@ -7,7 +7,8 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const uri = process.env.MONGODB_URI || '';
+const DEFAULT_URI = 'mongodb+srv://defidecoder13_db_user:cpNoZAxRxehq4R22@cluster0.cqkmbwz.mongodb.net/portfolio?retryWrites=true&w=majority&appName=Cluster0';
+const uri = process.env.MONGODB_URI || DEFAULT_URI;
 const dbName = process.env.MONGODB_DB_NAME || 'portfolio';
 
 let cachedClient = null;
@@ -19,8 +20,9 @@ export async function connectToDatabase() {
     return { client: cachedClient, db: cachedDb };
   }
 
-  if (!uri || uri.includes('<db_username>')) {
-    console.warn('[MongoDB] MONGODB_URI is not fully configured yet (missing username). Running in local fallback mode.');
+  const activeUri = process.env.MONGODB_URI || uri;
+  if (!activeUri || activeUri.includes('<db_username>')) {
+    console.warn('[MongoDB] MONGODB_URI is not configured.');
     return { client: null, db: null };
   }
 
@@ -33,7 +35,7 @@ export async function connectToDatabase() {
 
   try {
     isConnecting = true;
-    const client = new MongoClient(uri, {
+    const client = new MongoClient(activeUri, {
       serverSelectionTimeoutMS: 5000,
       connectTimeoutMS: 10000,
     });

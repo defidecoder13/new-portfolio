@@ -302,18 +302,32 @@ export function createStickyWall(container) {
     if (isAnyDragging) return; // Never wipe or disrupt note while user is dragging
     try {
       const res = await fetch(API_URL);
-      if (!res.ok) throw new Error('API offline');
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       
+      // If server is in fallback mode (e.g. database connecting/offline), DO NOT wipe local notes!
+      if (data.fallback || !data.live) {
+        if (liveLabel) liveLabel.textContent = 'LOCAL GUESTBOOK (OFFLINE)';
+        return;
+      }
+
       if (data.notes && Array.isArray(data.notes)) {
         if (isAnyDragging) return;
-        notes = data.notes;
+        
+        // Preserve any recent locally pinned notes that might still be syncing to MongoDB
+        const serverIds = new Set(data.notes.map((n) => String(n.noteId || n.id || n._id)));
+        const now = Date.now();
+        const pendingRecent = notes.filter((localNote) => {
+          const id = String(localNote.noteId || localNote.id || localNote._id);
+          const isRecent = localNote.localTimestamp && (now - localNote.localTimestamp < 30000);
+          return !serverIds.has(id) && isRecent;
+        });
+
+        notes = [...data.notes, ...pendingRecent];
         saveLocal();
         renderAll();
         if (liveLabel) {
-          liveLabel.textContent = data.live 
-            ? `MONGODB LIVE GUESTBOOK (${notes.length} NOTES)` 
-            : 'LOCAL GUESTBOOK (SYNCED)';
+          liveLabel.textContent = `MONGODB LIVE GUESTBOOK (${notes.length} NOTES)`;
         }
       }
     } catch (err) {
@@ -508,7 +522,7 @@ export function createStickyWall(container) {
     if (e.target === composerModal) closeComposer();
   });
 
-  composerStickBtn.addEventListener('click', () => {
+  composerStickBtn.addEventListener('click', async () => {
     const text = composerText.value.trim();
     if (!text) return;
     const author = (composerAuthor.value.trim() || 'ANONYMOUS').toUpperCase();
@@ -519,8 +533,10 @@ export function createStickyWall(container) {
     const dateStr = `${months[now.getMonth()]} ${now.getDate()}`;
 
     zIndexCounter += 1;
+    const noteId = Date.now().toString();
     const newNote = {
-      id: Date.now().toString(),
+      id: noteId,
+      noteId: noteId,
       author,
       date: dateStr,
       color: activeColor,
@@ -529,13 +545,15 @@ export function createStickyWall(container) {
       x: 35 + (Math.random() * 15 - 7.5),
       y: 35 + (Math.random() * 15 - 7.5),
       z: zIndexCounter,
+      localTimestamp: Date.now(),
     };
 
     notes.push(newNote);
     saveLocal();
-    renderNote(newNote);
-    postNewNoteToMongo(newNote);
+    renderAll();
     closeComposer();
+
+    await postNewNoteToMongo(newNote);
   });
 
   let onExitCallback = null;
