@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="description" content="Subham Santra — Full-Stack Developer & AI Engineer. Interactive 2.5D Studio Portfolio featuring real-world projects, live sticky notes guestbook, and developer terminal.">
+  <title>Subham Santra · Interactive 3D Developer Portfolio</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Patrick+Hand&family=Pixelify+Sans:wght@400..700&family=VT323&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/styles.css">
+  
+  <!-- Preload critical assets -->
+  <link rel="preload" as="image" href="/assets/studio.webp" fetchpriority="high">
+  <link rel="preload" as="image" href="/assets/studio-depth.webp">
+  <link rel="modulepreload" href="/src/main.js">
+  <link rel="modulepreload" href="/src/parallax.js">
+  <link rel="modulepreload" href="/src/audio.js">
+</head>
+<body>
+  <!-- Crawlable semantic text mirror for search engines & screen readers -->
+  <main class="crawl" aria-hidden="true">
+    <h1>Subham Santra — Full-Stack Developer & AI Engineer</h1>
+    <p>Building production web applications, AI developer tools, and interactive 3D experiences with JavaScript, TypeScript, React, Next.js, Node.js, and PostgreSQL.</p>
+    <section>
+      <h2>About Subham Santra</h2>
+      <p>Master of Computer Application (MCA) with a strong foundation in distributed systems, backend architectures, real-time WebGL, and generative AI APIs.</p>
+    </section>
+    <section>
+      <h2>Featured Shipped Projects</h2>
+      <ul>
+        <li><strong>Medsathi:</strong> Production retail pharmacy management system with offline PWA IndexedDB sync and batch tracking.</li>
+        <li><strong>Studium:</strong> AI academic copilot with synchronized PDF textbook reading and Google Gemini citations.</li>
+        <li><strong>InterviewAI:</strong> Automated AI technical and behavioral interview platform with STAR framework scoring.</li>
+        <li><strong>UniRoomies:</strong> Student accommodation and rental vacancy platform.</li>
+      </ul>
+    </section>
+  </main>
+
+  <!-- WebGL Three.js Container -->
+  <div id="app"></div>
+
+  <!-- Interactive Hotspot Bounding Boxes -->
+  <div id="hotspots"></div>
+
+  <!-- Cozy Studio Preloader Screen -->
+  <div id="loading" class="studio-loader">
+    <!-- Ambient Floating Dust Particles -->
+    <div class="loader-particles">
+      <span class="particle p1"></span>
+      <span class="particle p2"></span>
+      <span class="particle p3"></span>
+      <span class="particle p4"></span>
+      <span class="particle p5"></span>
+      <span class="particle p6"></span>
+    </div>
+
+    <!-- Main Preloader Wooden Card -->
+    <div class="loader-card">
+      <span class="loader-screw top-left"></span>
+      <span class="loader-screw top-right"></span>
+      <span class="loader-screw bottom-left"></span>
+      <span class="loader-screw bottom-right"></span>
+
+      <!-- Animated Mochi Cat Companion -->
+      <div class="loader-cat-container">
+        <div class="cat-halo"></div>
+        <div class="loader-cat-sprite"></div>
+      </div>
+
+      <!-- Studio Branding -->
+      <div class="loader-brand">
+        <h2 class="loader-title">SUBHAM’S STUDIO</h2>
+        <span class="loader-subtitle">Interactive 3D Experience</span>
+      </div>
+
+      <!-- Progress Track & Percentage -->
+      <div class="loader-progress-box">
+        <div class="loader-progress-track">
+          <div class="loader-progress-bar" id="loader-progress-bar">
+            <span class="progress-glint"></span>
+          </div>
+        </div>
+        <span class="loader-percent" id="loader-percent">0%</span>
+      </div>
+
+      <!-- Dynamic Status Text -->
+      <p class="loader-status" id="loader-status">Brewing coffee & entering the studio…</p>
+    </div>
+  </div>
+
+  <!-- Hover Tooltip -->
+  <div id="tooltip"></div>
+
+  <!-- Bottom Interactive Hint -->
+  <div id="hint">Click around the room to explore</div>
+
+  <!-- Backdrop Dimming -->
+  <div id="backdrop"></div>
+  <div id="screen-dim"></div>
+
+  <!-- Sliding Modal Drawer -->
+  <aside id="panel" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="panel-title">
+    <button id="panel-close" aria-label="Close">✕</button>
+    <p id="panel-tag"></p>
+    <h2 id="panel-title"></h2>
+    <div id="panel-body" class="rich"></div>
+  </aside>
+
+  <!-- Computer Monitor Screen Mode -->
+  <section id="screen" aria-hidden="true" role="dialog" aria-modal="true">
+    <button id="screen-close" aria-label="Close">✕</button>
+    <div id="screen-body" class="rich"></div>
+  </section>
+
+  <noscript>
+    <div class="fallback">
+      <div class="fallback-inner">
+        <h1>Interactive Portfolio</h1>
+        <p>This 3D room experience requires JavaScript. Please enable JavaScript to explore.</p>
+      </div>
+    </div>
+  </noscript>
+
+  <script type="module" id="room-boot" src="/src/main.js"></script>
+
+  <!-- WebGL Fail-Safe Watchdog Script -->
+  <script>
+  (function () {
+    var done = false;
+    function bail(why) {
+      if (done || window.__roomStarted) return;
+      done = true;
+      var l = document.getElementById('loading');
+      if (l && l.parentNode) l.parentNode.removeChild(l);
+      var c = document.querySelector('.crawl');
+      if (c) c.removeAttribute('aria-hidden');
+      document.body.className += ' room-failed';
+      if (window.console) console.error('[Room] Fallback triggered (' + why + ')');
+    }
+    var tag = document.getElementById('room-boot');
+    if (tag) tag.addEventListener('error', function () { bail('Module failed to load'); });
+    setTimeout(function () { bail('Startup timeout'); }, 12000);
+  })();
+  </script>
+</body>
+</html>
